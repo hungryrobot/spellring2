@@ -52,35 +52,17 @@ export class ApiManager {
   }
 
   async createSpells(spells: InsertSpell[]): Promise<Spell[]> {
-    console.log('CSV upload: Using local storage for spell management');
+    console.log('CSV upload: Processing', spells.length, 'spells');
     
     // Clear existing spells and add new ones
-    await this.deleteAllSpells();
+    localStorageManager.clearSpells();
     const result = localStorageManager.addSpells(spells);
     
-    console.log('Successfully imported', result.length, 'spells to local storage');
+    console.log('Successfully imported', result.length, 'spells');
     return result;
   }
 
   async deleteAllSpells(): Promise<void> {
-    const serverAvailable = await this.checkServerAvailability();
-    
-    if (serverAvailable) {
-      try {
-        // Try Netlify functions first
-        try {
-          await fetch('/.netlify/functions/spells?action=clear', { method: 'DELETE' });
-        } catch {
-          // Fallback to Express server
-          await apiRequest('DELETE', '/api/spells');
-        }
-      } catch {
-        // Fallback to local storage if server fails
-        localStorageManager.clearSpells();
-        return;
-      }
-    }
-    
     localStorageManager.clearSpells();
   }
 
