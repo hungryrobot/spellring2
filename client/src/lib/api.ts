@@ -48,73 +48,18 @@ export class ApiManager {
   }
 
   async getAllSpells(): Promise<Spell[]> {
-    const serverAvailable = await this.checkServerAvailability();
-    
-    if (serverAvailable) {
-      try {
-        // Try Netlify functions first
-        let response;
-        response = await fetch('/.netlify/functions/minimal-spells');
-        if (response.ok) {
-          const data = await response.json();
-          if (data.error && data.fallback === 'using_local_storage') {
-            return localStorageManager.getAllSpells();
-          }
-          return data;
-        }
-        throw new Error('Server request failed');
-      } catch {
-        // Fallback to local storage if server fails
-        return localStorageManager.getAllSpells();
-      }
-    }
-    
     return localStorageManager.getAllSpells();
   }
 
   async createSpells(spells: InsertSpell[]): Promise<Spell[]> {
-    const serverAvailable = await this.checkServerAvailability();
+    console.log('CSV upload: Using local storage for spell management');
     
-    if (serverAvailable) {
-      try {
-        // Try Netlify functions first
-        let response;
-        try {
-          console.log('Attempting to upload', spells.length, 'spells to database');
-          
-          response = await fetch('/.netlify/functions/simple-upload', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(spells)
-          });
-          
-          if (response.ok) {
-            const result = await response.json();
-            if (result.fallback) {
-              console.log('Database not available, using local storage fallback');
-              throw new Error('Database fallback');
-            }
-            console.log('Successfully uploaded to database:', result.length, 'spells');
-            return result;
-          } else {
-            const errorText = await response.text();
-            console.error('Upload failed:', response.status, errorText);
-            throw new Error(`Upload failed: ${response.status}`);
-          }
-        } catch (error) {
-          console.log('Using local storage fallback:', error.message);
-          // Fallback to local storage
-          return localStorageManager.addSpells(spells);
-        }
-      } catch (error) {
-        console.error('All server methods failed, using local storage:', error);
-        // Fallback to local storage if all server methods fail
-        return localStorageManager.addSpells(spells);
-      }
-    }
+    // Clear existing spells and add new ones
+    await this.deleteAllSpells();
+    const result = localStorageManager.addSpells(spells);
     
-    console.log('Server not available, using local storage');
-    return localStorageManager.addSpells(spells);
+    console.log('Successfully imported', result.length, 'spells to local storage');
+    return result;
   }
 
   async deleteAllSpells(): Promise<void> {
