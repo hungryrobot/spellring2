@@ -80,6 +80,19 @@ export class ApiManager {
         try {
           console.log('Attempting to upload', spells.length, 'spells to Netlify function');
           console.log('Sample spell data:', spells[0]);
+          
+          // First test with validation endpoint
+          const testResponse = await fetch('/.netlify/functions/test-upload', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(spells)
+          });
+          
+          if (testResponse.ok) {
+            const testResult = await testResponse.json();
+            console.log('Validation test result:', testResult);
+          }
+          
           response = await fetch('/.netlify/functions/simple-spells', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
