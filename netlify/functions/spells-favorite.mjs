@@ -1,6 +1,13 @@
 import { neon } from '@netlify/neon';
 
-const sql = neon(); // automatically uses env NETLIFY_DATABASE_URL
+// Try multiple possible environment variable names
+const getDatabaseUrl = () => {
+  return process.env.NETLIFY_DATABASE_URL || 
+         process.env.DATABASE_URL || 
+         process.env.NEON_DATABASE_URL;
+};
+
+const sql = neon(getDatabaseUrl());
 
 export default async (req, context) => {
   if (req.method !== 'POST') {

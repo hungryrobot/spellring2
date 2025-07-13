@@ -1,6 +1,13 @@
 import { neon } from '@netlify/neon';
 
-const sql = neon(); // automatically uses env NETLIFY_DATABASE_URL
+// Try multiple possible environment variable names
+const getDatabaseUrl = () => {
+  return process.env.NETLIFY_DATABASE_URL || 
+         process.env.DATABASE_URL || 
+         process.env.NEON_DATABASE_URL;
+};
+
+const sql = neon(getDatabaseUrl());
 
 // Ensure tables exist
 async function ensureTables() {
@@ -31,7 +38,21 @@ async function ensureTables() {
 }
 
 export default async (req, context) => {
-  await ensureTables();
+  try {
+    await ensureTables();
+  } catch (error) {
+    console.error('Database connection error:', error);
+    return new Response(JSON.stringify({ 
+      error: 'Database connection failed', 
+      details: error.message 
+    }), {
+      status: 500,
+      headers: { 
+        'Content-Type': 'application/json',
+        'Access-Control-Allow-Origin': '*'
+      }
+    });
+  }
   
   const method = req.method;
   const url = new URL(req.url);
