@@ -75,17 +75,22 @@ export default function Setup() {
                   existingSpell.class = allClasses.join(', ');
                 } else {
                   // Create new spell entry
+                  // Clean and validate concentration field
+                  let concentration = false;
+                  if (row.concentration) {
+                    const concStr = String(row.concentration).toLowerCase().trim();
+                    concentration = concStr === 'true' || concStr === 'yes' || concStr === '1';
+                  }
+                  
                   spellMap.set(spellName, {
                     name: spellName,
                     class: classes.join(', '),
                     level: parseInt(row.level) || 0,
                     description: row.description || '',
-                    spell: row.description || '', // Keep legacy field for compatibility
                     type: row.type || '',
-                    concentration: row.concentration || '',
+                    concentration: concentration,
                     upcast: row.upcast || '',
-                    range: row.range || '',
-                    isFavorite: false
+                    range: row.range || ''
                   });
                 }
               });

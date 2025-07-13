@@ -79,6 +79,7 @@ export class ApiManager {
         let response;
         try {
           console.log('Attempting to upload', spells.length, 'spells to Netlify function');
+          console.log('Sample spell data:', spells[0]);
           response = await fetch('/.netlify/functions/simple-spells', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -88,6 +89,7 @@ export class ApiManager {
           if (!response.ok) {
             const errorText = await response.text();
             console.error('Netlify function error:', response.status, errorText);
+            console.error('Request payload sample:', JSON.stringify(spells.slice(0, 2), null, 2));
             throw new Error(`Netlify function failed: ${response.status} - ${errorText}`);
           }
           
