@@ -14,3 +14,9 @@
 
 [build.environment]
   NODE_VERSION = "18"
+  
+[functions]
+  node_bundler = "esbuild"
+  
+[[plugins]]
+package = "@netlify/plugin-functions-install-core"
