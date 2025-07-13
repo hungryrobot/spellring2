@@ -82,7 +82,7 @@ export class ApiManager {
         try {
           console.log('Attempting to upload', spells.length, 'spells to database');
           
-          response = await fetch('/.netlify/functions/minimal-spells', {
+          response = await fetch('/.netlify/functions/simple-upload', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(spells)
@@ -90,13 +90,15 @@ export class ApiManager {
           
           if (response.ok) {
             const result = await response.json();
-            if (result.error && result.fallback === 'using_local_storage') {
-              console.log('Database not available, using local storage');
+            if (result.fallback) {
+              console.log('Database not available, using local storage fallback');
               throw new Error('Database fallback');
             }
             console.log('Successfully uploaded to database:', result.length, 'spells');
             return result;
           } else {
+            const errorText = await response.text();
+            console.error('Upload failed:', response.status, errorText);
             throw new Error(`Upload failed: ${response.status}`);
           }
         } catch (error) {
