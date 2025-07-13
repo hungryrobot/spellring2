@@ -54,13 +54,15 @@ export class ApiManager {
       try {
         // Try Netlify functions first
         let response;
-        try {
-          response = await fetch('/.netlify/functions/spells');
-        } catch {
-          // Fallback to Express server
-          response = await apiRequest('GET', '/api/spells');
+        response = await fetch('/.netlify/functions/minimal-spells');
+        if (response.ok) {
+          const data = await response.json();
+          if (data.error && data.fallback === 'using_local_storage') {
+            return localStorageManager.getAllSpells();
+          }
+          return data;
         }
-        return await response.json();
+        throw new Error('Server request failed');
       } catch {
         // Fallback to local storage if server fails
         return localStorageManager.getAllSpells();
@@ -78,42 +80,29 @@ export class ApiManager {
         // Try Netlify functions first
         let response;
         try {
-          console.log('Attempting to upload', spells.length, 'spells to Netlify function');
-          console.log('Sample spell data:', spells[0]);
+          console.log('Attempting to upload', spells.length, 'spells to database');
           
-          // First test with validation endpoint
-          const testResponse = await fetch('/.netlify/functions/test-upload', {
+          response = await fetch('/.netlify/functions/minimal-spells', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(spells)
           });
           
-          if (testResponse.ok) {
-            const testResult = await testResponse.json();
-            console.log('Validation test result:', testResult);
+          if (response.ok) {
+            const result = await response.json();
+            if (result.error && result.fallback === 'using_local_storage') {
+              console.log('Database not available, using local storage');
+              throw new Error('Database fallback');
+            }
+            console.log('Successfully uploaded to database:', result.length, 'spells');
+            return result;
+          } else {
+            throw new Error(`Upload failed: ${response.status}`);
           }
-          
-          response = await fetch('/.netlify/functions/simple-spells', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(spells)
-          });
-          
-          if (!response.ok) {
-            const errorText = await response.text();
-            console.error('Netlify function error:', response.status, errorText);
-            console.error('Request payload sample:', JSON.stringify(spells.slice(0, 2), null, 2));
-            throw new Error(`Netlify function failed: ${response.status} - ${errorText}`);
-          }
-          
-          const result = await response.json();
-          console.log('Successfully uploaded to database:', result.length, 'spells');
-          return result;
         } catch (error) {
-          console.error('Netlify function failed, trying Express server:', error);
-          // Fallback to Express server
-          response = await apiRequest('POST', '/api/spells/bulk', { spells });
-          return await response.json();
+          console.log('Using local storage fallback:', error.message);
+          // Fallback to local storage
+          return localStorageManager.addSpells(spells);
         }
       } catch (error) {
         console.error('All server methods failed, using local storage:', error);
