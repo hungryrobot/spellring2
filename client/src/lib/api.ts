@@ -78,22 +78,36 @@ export class ApiManager {
         // Try Netlify functions first
         let response;
         try {
-          response = await fetch('/.netlify/functions/spells', {
+          console.log('Attempting to upload', spells.length, 'spells to Netlify function');
+          response = await fetch('/.netlify/functions/simple-spells', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(spells)
           });
-        } catch {
+          
+          if (!response.ok) {
+            const errorText = await response.text();
+            console.error('Netlify function error:', response.status, errorText);
+            throw new Error(`Netlify function failed: ${response.status} - ${errorText}`);
+          }
+          
+          const result = await response.json();
+          console.log('Successfully uploaded to database:', result.length, 'spells');
+          return result;
+        } catch (error) {
+          console.error('Netlify function failed, trying Express server:', error);
           // Fallback to Express server
           response = await apiRequest('POST', '/api/spells/bulk', { spells });
+          return await response.json();
         }
-        return await response.json();
-      } catch {
-        // Fallback to local storage if server fails
+      } catch (error) {
+        console.error('All server methods failed, using local storage:', error);
+        // Fallback to local storage if all server methods fail
         return localStorageManager.addSpells(spells);
       }
     }
     
+    console.log('Server not available, using local storage');
     return localStorageManager.addSpells(spells);
   }
 
