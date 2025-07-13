@@ -7,7 +7,12 @@ export default async (req, context) => {
     const dbUrl = process.env.DATABASE_URL;
     const neonDbUrl = process.env.NEON_DATABASE_URL;
     
-    const activeDbUrl = netlifyDbUrl || dbUrl || neonDbUrl;
+    let activeDbUrl = netlifyDbUrl || dbUrl || neonDbUrl;
+    
+    // Clean the URL if it has psql prefix
+    if (activeDbUrl && activeDbUrl.startsWith("psql '")) {
+      activeDbUrl = activeDbUrl.replace(/^psql '/, '').replace(/'$/, '');
+    }
     
     if (!activeDbUrl) {
       return new Response(JSON.stringify({
