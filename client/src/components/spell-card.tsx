@@ -144,166 +144,197 @@ export default function SpellCard({
               : "bg-white border-gray-300 border-[3px] hover:shadow-md cursor-pointer"
       )}
     >
-      <div className="flex items-start justify-between">
-        <div className="flex-1 min-w-0 space-y-2">
-          {/* First line: Action buttons and spell title */}
-          <div className="flex items-center gap-2 min-w-0">
-            {/* Action buttons */}
-            <div className="flex items-center gap-1 flex-shrink-0">
-              {/* Add spell badge for library cards - positioned first */}
-              {!isRingCard && onAdd && !disabled ? (
-                canUpcast ? (
-                  <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                      <div 
-                        className={cn(
-                          "text-xs font-medium flex-shrink-0 border cursor-pointer hover:opacity-80 flex items-center gap-1 px-2 py-1 rounded-md",
-                          "bg-yellow-400 border-yellow-600 text-yellow-900"
-                        )}
-                        title="Click to select level and add to ring"
-                      >
-                        {spell.level === 0 ? "Add Cantrip" : `Add Level ${spell.level} Spell`}
-                        <ChevronDown className="w-3 h-3" />
-                      </div>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent align="start" className="w-40">
-                      {getUpcastOptions().map((level) => (
-                        <DropdownMenuItem
-                          key={level}
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            playAddSpellSound();
-                            onAdd(spell, level - baseLevel);
-                          }}
-                          className="cursor-pointer touch-manipulation py-2"
-                        >
-                          {spell.level === 0 && level === 1 ? "Cantrip (Base)" :
-                           spell.level === 0 && level > 1 ? `Level ${level} (Upcast)` :
-                           level === baseLevel ? `Level ${level} (Base)` : 
-                           `Level ${level} (Upcast)`}
-                        </DropdownMenuItem>
-                      ))}
-                    </DropdownMenuContent>
-                  </DropdownMenu>
-                ) : (
-                  <div 
-                    className={cn(
-                      "text-xs font-medium flex-shrink-0 border cursor-pointer hover:opacity-80 flex items-center gap-1 px-2 py-1 rounded-md",
-                      disabled ? "border-gray-300 text-gray-400 bg-gray-100" : 
-                      "border-gray-400 text-gray-600 bg-white"
-                    )}
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      playAddSpellSound();
-                      onAdd(spell, 0);
-                    }}
-                    title="Click to add to ring"
-                  >
-                    {spell.level === 0 ? "Add Cantrip" : `Add Level ${spell.level} Spell`}
-                  </div>
-                )
-              ) : null}
-
-              {isRingCard && onRemove && ringId && (
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    playSpellCastSound();
-                    // Small delay to let sound start before removing
-                    setTimeout(() => {
-                      onRemove(ringId);
-                    }, 50);
-                  }}
-                  className="text-red-600 hover:text-red-700 hover:bg-red-50 p-1 h-auto flex items-center gap-1"
-                  title="Cast Spell (Remove from Ring)"
-                >
-                  {upcastLevel > 0 ? (
-                    <Zap className="w-3 h-3 fill-yellow-400 text-yellow-400" />
-                  ) : (
-                    <Zap className="w-3 h-3" />
-                  )}
-                  <span className="text-xs">
-                    {spell.level === 0 && upcastLevel === 0 ? "Cast Cantrip" :
-                     spell.level === 0 && upcastLevel > 0 ? `Cast Level ${effectiveLevel} (Upcasted)` :
-                     upcastLevel > 0 ? `Cast Level ${effectiveLevel} (Upcasted)` : 
-                     `Cast Level ${effectiveLevel}`}
-                  </span>
-                </Button>
-              )}
-              
-
-              
-              {/* Favorite star button for library cards */}
-              {!isRingCard && onToggleFavorite && (
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    onToggleFavorite(spell.id);
-                  }}
-                  className={cn(
-                    "p-1 h-auto",
-                    spell.isFavorite 
-                      ? "text-yellow-500 hover:text-yellow-600 hover:bg-yellow-50" 
-                      : "text-gray-400 hover:text-yellow-500 hover:bg-yellow-50"
-                  )}
-                  title={spell.isFavorite ? "Remove from favorites" : "Add to favorites"}
-                >
-                  <Star className={cn("w-4 h-4", spell.isFavorite ? "fill-current" : "")} />
-                </Button>
-              )}
-            </div>
+      <div className="space-y-3">
+        {/* Mobile-optimized layout */}
+        <div className="space-y-2">
+          {/* Spell title - always first for clarity */}
+          <div className="flex items-center gap-2">
+            <h3 className={cn(
+              "font-semibold text-lg flex-1", 
+              disabled ? "text-gray-400" : 
+              spell.isFavorite ? "text-gray-800" : "text-gray-900"
+            )}>
+              {spell.name}
+            </h3>
             
-            {/* Spell title and range badge - single line layout */}
-            <div className="flex items-center gap-2 flex-1 min-w-0">
-              <h3 className={cn(
-                "font-semibold text-base flex-shrink-0", 
-                disabled ? "text-gray-400" : 
-                spell.isFavorite ? "text-gray-800" : "text-gray-900"
-              )}>
-                {spell.name}
-              </h3>
-              
-              {/* Range badge - now inline */}
+            {/* Favorite star button for library cards */}
+            {!isRingCard && onToggleFavorite && (
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onToggleFavorite(spell.id);
+                }}
+                className={cn(
+                  "p-2 h-auto",
+                  spell.isFavorite 
+                    ? "text-yellow-500 hover:text-yellow-600 hover:bg-yellow-50" 
+                    : "text-gray-400 hover:text-yellow-500 hover:bg-yellow-50"
+                )}
+                title={spell.isFavorite ? "Remove from favorites" : "Add to favorites"}
+              >
+                <Star className={cn("w-5 h-5", spell.isFavorite ? "fill-current" : "")} />
+              </Button>
+            )}
+          </div>
+          
+          {/* Action buttons - full width for mobile */}
+          <div className="flex gap-2">
+            {/* Add spell button for library cards - full width on mobile */}
+            {!isRingCard && onAdd && !disabled ? (
+              canUpcast ? (
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button 
+                      className={cn(
+                        "flex-1 min-h-[44px] text-sm font-medium border-2 gap-2",
+                        "bg-yellow-400 border-yellow-600 text-yellow-900 hover:bg-yellow-500"
+                      )}
+                      size="default"
+                    >
+                      {spell.level === 0 ? "Add Cantrip" : `Add Level ${spell.level} Spell`}
+                      <ChevronDown className="w-4 h-4" />
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="start" className="w-56">
+                    {getUpcastOptions().map((level) => (
+                      <DropdownMenuItem
+                        key={level}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          playAddSpellSound();
+                          onAdd(spell, level - baseLevel);
+                        }}
+                        className="cursor-pointer touch-manipulation py-3 text-base"
+                      >
+                        {spell.level === 0 && level === 1 ? "Cantrip (Base)" :
+                         spell.level === 0 && level > 1 ? `Level ${level} (Upcast)` :
+                         level === baseLevel ? `Level ${level} (Base)` : 
+                         `Level ${level} (Upcast)`}
+                      </DropdownMenuItem>
+                    ))}
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              ) : (
+                <Button 
+                  className={cn(
+                    "flex-1 min-h-[44px] text-sm font-medium border-2",
+                    disabled ? "border-gray-300 text-gray-400 bg-gray-100" : 
+                    "border-gray-400 text-gray-600 bg-white hover:bg-gray-50"
+                  )}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    playAddSpellSound();
+                    onAdd(spell, 0);
+                  }}
+                  disabled={disabled}
+                  size="default"
+                >
+                  {spell.level === 0 ? "Add Cantrip" : `Add Level ${spell.level} Spell`}
+                </Button>
+              )
+            ) : null}
+
+            {isRingCard && onRemove && ringId && (
+              <Button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  playSpellCastSound();
+                  setTimeout(() => {
+                    onRemove(ringId);
+                  }, 50);
+                }}
+                className="flex-1 min-h-[44px] text-red-600 hover:text-red-700 hover:bg-red-50 border-2 border-red-200 gap-2"
+                variant="outline"
+                size="default"
+              >
+                {upcastLevel > 0 ? (
+                  <Zap className="w-4 h-4 fill-yellow-400 text-yellow-400" />
+                ) : (
+                  <Zap className="w-4 h-4" />
+                )}
+                <span className="text-sm font-medium">
+                  {spell.level === 0 && upcastLevel === 0 ? "Cast Cantrip" :
+                   spell.level === 0 && upcastLevel > 0 ? `Cast Level ${effectiveLevel} (Upcasted)` :
+                   upcastLevel > 0 ? `Cast Level ${effectiveLevel} (Upcasted)` : 
+                   `Cast Level ${effectiveLevel}`}
+                </span>
+              </Button>
+            )}
+          </div>
+
+          {/* Spell details badges - separate row for mobile */}
+          <div className="flex flex-wrap gap-2">
+            {/* Level badge */}
+            <Badge 
+              variant="outline" 
+              className={cn(
+                "text-sm px-2 py-1",
+                disabled ? "border-gray-300 text-gray-400" : 
+                spell.isFavorite ? "border-blue-300 text-blue-700 bg-blue-50" : "border-gray-300 text-gray-600"
+              )}
+            >
+              {spell.level === 0 ? "Cantrip" : `Level ${spell.level}`}
+            </Badge>
+            
+            {/* Range badge */}
+            <Badge 
+              variant="outline" 
+              className={cn(
+                "text-sm px-2 py-1",
+                disabled ? "border-gray-300 text-gray-400" : 
+                spell.isFavorite ? "border-blue-300 text-blue-700 bg-blue-50" : "border-gray-300 text-gray-600"
+              )}
+            >
+              {spell.range || 'Unknown'}
+            </Badge>
+            
+            {/* Type badge if different from spell name area */}
+            {spell.type && (
               <Badge 
                 variant="outline" 
                 className={cn(
-                  "text-xs flex items-center gap-1 flex-shrink-0",
+                  "text-sm px-2 py-1",
                   disabled ? "border-gray-300 text-gray-400" : 
-                  spell.isFavorite ? "border-gray-600 text-gray-700 bg-white" :
-                  "border-gray-400 text-gray-600"
+                  spell.isFavorite ? "border-blue-300 text-blue-700 bg-blue-50" : "border-gray-300 text-gray-600"
                 )}
               >
-                <Eye className="w-3 h-3" />
-                {spell.range}
+                {spell.type}
               </Badge>
-              
-
-            </div>
-
-            {/* Show details button - moved to end of line */}
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => setIsDescriptionExpanded(!isDescriptionExpanded)}
-              className="h-auto p-1 text-xs text-gray-500 hover:text-gray-700 flex-shrink-0"
-            >
-              {isDescriptionExpanded ? (
-                <>
-                  <ChevronUp className="w-3 h-3 mr-1" />
-                  Show less
-                </>
-              ) : (
-                <>
-                  <ChevronDown className="w-3 h-3 mr-1" />
-                  Show details
-                </>
-              )}
-            </Button>
+            )}
           </div>
+        </div>
+
+        {/* Show details button - separate section */}
+        <div className="flex justify-center">
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={(e) => {
+              e.stopPropagation();
+              setIsDescriptionExpanded(!isDescriptionExpanded);
+            }}
+            className={cn(
+              "text-gray-500 hover:text-gray-700 hover:bg-gray-100 gap-1 min-h-[36px]",
+              disabled && "text-gray-400 hover:text-gray-400"
+            )}
+          >
+            {isDescriptionExpanded ? (
+              <>
+                <Eye className="w-4 h-4" />
+                <span className="text-sm">Hide details</span>
+                <ChevronUp className="w-4 h-4" />
+              </>
+            ) : (
+              <>
+                <Eye className="w-4 h-4" />
+                <span className="text-sm">Show details</span>
+                <ChevronDown className="w-4 h-4" />
+              </>
+            )}
+          </Button>
+        </div>
 
           {/* Collapsible additional info */}
           {isDescriptionExpanded && (
@@ -341,9 +372,6 @@ export default function SpellCard({
               </p>
             </div>
           )}
-        </div>
-
-
       </div>
     </Card>
   );
