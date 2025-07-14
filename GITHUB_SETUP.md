@@ -2,11 +2,11 @@
 
 Follow these steps to get your D&D spell app on GitHub and deploy to Vercel.
 
-## Step 1: Download Your Code
+## Step 1: Prepare Your Code
 
-1. **Download project**: In Replit, click the three dots menu → Download as ZIP
-2. **Extract files**: Unzip the downloaded file to your computer
-3. **Clean up**: The extracted folder will contain your project files
+1. **Your code is ready**: Since you're using Cursor, your project files are already on your computer
+2. **Navigate to project**: Open your terminal and go to your project directory
+3. **Verify files**: Make sure all your project files are present
 
 ## Step 2: Create GitHub Repository
 
@@ -21,21 +21,13 @@ Follow these steps to get your D&D spell app on GitHub and deploy to Vercel.
 
 ## Step 3: Upload Your Code
 
-### Option A: Using GitHub Web Interface (Easiest)
-
-1. **Upload files**: On your new repository page, click "uploading an existing file"
-2. **Drag and drop**: Drag all your project files (not the folder, just the contents)
-3. **Commit**: 
-   - Commit message: "Initial commit - D&D Spell Ring Manager"
-   - Click "Commit changes"
-
-### Option B: Using Git Commands (If you have Git installed)
+### Option A: Using Git Commands (Recommended)
 
 ```bash
 # Navigate to your project folder
-cd path/to/your/extracted/project
+cd path/to/your/project
 
-# Initialize git
+# Initialize git (if not already done)
 git init
 
 # Add GitHub remote (replace with your username and repo name)
@@ -51,6 +43,14 @@ git commit -m "Initial commit - D&D Spell Ring Manager"
 git branch -M main
 git push -u origin main
 ```
+
+### Option B: Using GitHub Web Interface
+
+1. **Upload files**: On your new repository page, click "uploading an existing file"
+2. **Drag and drop**: Drag all your project files (not the folder, just the contents)
+3. **Commit**: 
+   - Commit message: "Initial commit - D&D Spell Ring Manager"
+   - Click "Commit changes"
 
 ## Step 4: Deploy to Vercel
 
