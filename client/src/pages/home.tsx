@@ -184,23 +184,23 @@ export default function Home() {
     <div className="min-h-screen bg-gray-50">
 
       {/* Main Content */}
-      <div className="max-w-7xl mx-auto px-6 py-6">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div className="max-w-7xl mx-auto px-4 py-4 sm:px-6 sm:py-6">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 lg:gap-6">
           
           {/* Combined Header and Ring Storage Section */}
           <Card className="shadow-sm">
             <CardHeader className="border-b border-gray-200">
-              <div className="flex items-center justify-between">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                 <CardTitle className="flex items-center space-x-2">
-                  <h1 className="text-2xl font-bold text-purple-600">Ring of Spell Storage</h1>
+                  <h1 className="text-xl sm:text-2xl font-bold text-purple-600">Ring of Spell Storage</h1>
                 </CardTitle>
-                <div className="flex items-center space-x-4">
+                <div className="flex items-center justify-between sm:justify-end space-x-4">
                   <CapacityIndicator current={currentCapacity} max={5} />
                   <Button
                     variant="ghost"
                     size="sm"
                     onClick={() => setLocation("/setup")}
-                    className="text-gray-600 hover:text-purple-600"
+                    className="text-gray-600 hover:text-purple-600 min-h-[44px] px-4"
                   >
                     <Settings className="w-5 h-5" />
                   </Button>
@@ -209,7 +209,7 @@ export default function Home() {
 
             </CardHeader>
             
-            <CardContent className="p-6">
+            <CardContent className="p-4 sm:p-6">
               {!Array.isArray(ringStorage) || ringStorage.length === 0 ? (
                 <div className="text-center py-8">
                   <BookOpen className="h-12 w-12 text-gray-400 mx-auto mb-4" />
@@ -318,7 +318,7 @@ export default function Home() {
               </div>
             </CardHeader>
             
-            <CardContent className="p-6">
+            <CardContent className="p-4 sm:p-6">
               {isLoading ? (
                 <div className="text-center py-8">
                   <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-purple-600 mx-auto"></div>
