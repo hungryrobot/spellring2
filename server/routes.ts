@@ -51,8 +51,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       // Debug: log the first row to see column names
       const firstRow = parseResult.data[0] || {};
-      console.log("CSV Headers detected:", Object.keys(firstRow));
-      console.log("First row sample:", firstRow);
+      
 
       // Group spells by name and combine classes
       const spellMap = new Map();
@@ -75,7 +74,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         // Split classes and clean them up
         const classes = classValue ? classValue.split(',').map((c: string) => c.trim()).filter((c: string) => c) : [''];
         
-        console.log(`Processing spell: ${spellName}, classes found: ${classes.join(', ')}`);
+
         
         if (spellMap.has(spellName)) {
           // Add new classes to existing spell

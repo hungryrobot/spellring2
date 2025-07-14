@@ -97,7 +97,7 @@ export default function SpellCard({
       oscillator.start(audioContext.currentTime);
       oscillator.stop(audioContext.currentTime + 0.3);
     } catch (error) {
-      console.log('Audio not supported or failed to play');
+      // Audio not supported or failed to play
     }
   };
 
@@ -125,7 +125,7 @@ export default function SpellCard({
       oscillator.start(audioContext.currentTime);
       oscillator.stop(audioContext.currentTime + 0.2);
     } catch (error) {
-      console.log('Audio not supported or failed to play');
+      // Audio not supported or failed to play
     }
   };
 
@@ -149,14 +149,6 @@ export default function SpellCard({
         <div className="space-y-2">
           {/* Spell title - always first for clarity */}
           <div className="flex items-center gap-2">
-            <h3 className={cn(
-              "font-semibold text-lg flex-1", 
-              disabled ? "text-gray-400" : 
-              spell.isFavorite ? "text-gray-800" : "text-gray-900"
-            )}>
-              {spell.name}
-            </h3>
-            
             {/* Favorite star button for library cards */}
             {!isRingCard && onToggleFavorite && (
               <Button
@@ -177,6 +169,26 @@ export default function SpellCard({
                 <Star className={cn("w-5 h-5", spell.isFavorite ? "fill-current" : "")} />
               </Button>
             )}
+
+            <h3 className={cn(
+              "font-semibold text-lg", 
+              disabled ? "text-gray-400" : 
+              spell.isFavorite ? "text-gray-800" : "text-gray-900"
+            )}>
+              {spell.name}
+            </h3>
+            
+            {/* Range badge */}
+            <Badge 
+              variant="outline" 
+              className={cn(
+                "text-xs px-2 py-1",
+                disabled ? "border-gray-300 text-gray-400" : 
+                spell.isFavorite ? "border-blue-300 text-blue-700 bg-blue-50" : "border-gray-300 text-gray-600"
+              )}
+            >
+              {spell.range || 'Unknown'}
+            </Badge>
           </div>
           
           {/* Action buttons - full width for mobile */}
@@ -266,29 +278,6 @@ export default function SpellCard({
 
           {/* Spell details badges - separate row for mobile */}
           <div className="flex flex-wrap gap-2">
-            {/* Level badge */}
-            <Badge 
-              variant="outline" 
-              className={cn(
-                "text-sm px-2 py-1",
-                disabled ? "border-gray-300 text-gray-400" : 
-                spell.isFavorite ? "border-blue-300 text-blue-700 bg-blue-50" : "border-gray-300 text-gray-600"
-              )}
-            >
-              {spell.level === 0 ? "Cantrip" : `Level ${spell.level}`}
-            </Badge>
-            
-            {/* Range badge */}
-            <Badge 
-              variant="outline" 
-              className={cn(
-                "text-sm px-2 py-1",
-                disabled ? "border-gray-300 text-gray-400" : 
-                spell.isFavorite ? "border-blue-300 text-blue-700 bg-blue-50" : "border-gray-300 text-gray-600"
-              )}
-            >
-              {spell.range || 'Unknown'}
-            </Badge>
             
             {/* Type badge if different from spell name area */}
             {spell.type && (

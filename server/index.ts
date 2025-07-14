@@ -7,8 +7,6 @@ if (process.env.NODE_ENV !== 'production') {
   await import('dotenv/config');
 }
 
-console.log('DATABASE_URL at runtime:', process.env.DATABASE_URL);
-
 const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));

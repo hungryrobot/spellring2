@@ -26,13 +26,9 @@ export class ApiManager {
   }
 
   async createSpells(spells: InsertSpell[]): Promise<Spell[]> {
-    console.log('CSV upload: Processing', spells.length, 'spells');
-    
     // Clear existing spells and add new ones
     localStorageManager.clearSpells();
     const result = localStorageManager.addSpells(spells);
-    
-    console.log('Successfully imported', result.length, 'spells');
     return result;
   }
 
