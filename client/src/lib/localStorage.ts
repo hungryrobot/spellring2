@@ -1,5 +1,5 @@
 // Local storage utilities for offline/static hosting
-import type { Spell, RingStorage } from "@shared/schema";
+import type { Spell, RingStorage } from "../../../shared/schema";
 
 const STORAGE_KEYS = {
   SPELLS: 'dnd-spells',

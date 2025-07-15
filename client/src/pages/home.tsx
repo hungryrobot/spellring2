@@ -9,7 +9,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useToast } from "@/hooks/use-toast";
 import { apiManager } from "@/lib/api";
 import { useLocation } from "wouter";
-import { type Spell } from "@shared/schema";
+import { type Spell } from "../../../shared/schema";
 import SpellCard from "@/components/spell-card";
 import CapacityIndicator from "@/components/capacity-indicator";
 // Storage indicator removed

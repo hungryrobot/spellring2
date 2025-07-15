@@ -2,7 +2,7 @@ import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Zap, Plus, Eye, ChevronDown, ChevronUp, TrendingUp, Star } from "lucide-react";
-import { type Spell } from "@shared/schema";
+import { type Spell } from "../../../shared/schema";
 import { cn } from "@/lib/utils";
 import { useState, useRef } from "react";
 import {

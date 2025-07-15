@@ -1,7 +1,7 @@
 // API layer that works with both server and local storage
 import { localStorageManager } from './localStorage';
 import { apiRequest } from './queryClient';
-import type { Spell, RingStorage, InsertSpell } from "@shared/schema";
+import type { Spell, RingStorage, InsertSpell } from "../../../shared/schema";
 
 // Detect if we're running in server mode or static mode
 const isServerMode = () => {

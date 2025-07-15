@@ -1,4 +1,4 @@
-import { spells, ringStorage, users, type Spell, type InsertSpell, type RingStorage, type InsertRingStorage, type User, type InsertUser } from "@shared/schema";
+import { insertSpellSchema, insertRingStorageSchema, type Spell, type RingStorage, type User, type InsertUser } from "../shared/schema";
 import { db } from "./db";
 import { eq } from "drizzle-orm";
 
