@@ -1,9 +1,12 @@
 import { cn } from "@/lib/utils";
+import { getSpellColor } from "@/lib/spell-colors";
 
 interface RingVisualProps {
   ringStorage: Array<{
     id: number;
     spell: {
+      id: number;
+      name: string;
       level: number;
     };
     upcastLevel: number;
@@ -12,27 +15,32 @@ interface RingVisualProps {
 }
 
 export default function RingVisual({ ringStorage, className }: RingVisualProps) {
-  // Calculate filled slots based on spell levels
-  const filledSlots: number[] = [];
+  // Calculate filled slots with spell information
+  const filledSlots: Array<{ spellId: number; spellName: string; color: string }> = [];
   
   ringStorage.forEach(item => {
     const baseLevel = item.spell.level === 0 ? 1 : item.spell.level;
     const effectiveLevel = baseLevel + (item.upcastLevel || 0);
+    const spellColor = getSpellColor(item.spell.id, item.spell.name);
     
     // Add the appropriate number of slots for this spell
     for (let i = 0; i < effectiveLevel; i++) {
-      filledSlots.push(effectiveLevel);
+      filledSlots.push({
+        spellId: item.spell.id,
+        spellName: item.spell.name,
+        color: spellColor.fill
+      });
     }
   });
 
   // Create 5 slots (70 degrees each, with 2 degree gaps)
   const slots = Array.from({ length: 5 }, (_, index) => {
-    const isFilled = index < filledSlots.length;
+    const slotData = index < filledSlots.length ? filledSlots[index] : null;
     const startAngle = index * 72 - 90; // Start from top, 72 degrees per slot (70 + 2 gap)
     
     return {
       index,
-      isFilled,
+      slotData,
       startAngle,
       endAngle: startAngle + 70
     };
@@ -106,13 +114,13 @@ export default function RingVisual({ ringStorage, className }: RingVisualProps) 
           
           {/* Filled slots */}
           {slots.map((slot) => {
-            if (!slot.isFilled) return null;
+            if (!slot.slotData) return null;
             
             return (
               <path
                 key={`slot-${slot.index}`}
                 d={createArcPath(slot.startAngle, slot.endAngle, 43, 16)}
-                fill="#10b981"
+                fill={slot.slotData.color}
                 className="transition-all duration-300"
               />
             );
@@ -120,25 +128,11 @@ export default function RingVisual({ ringStorage, className }: RingVisualProps) 
           
           {/* Magical sparkle effect for filled slots */}
           {slots.map((slot) => {
-            if (!slot.isFilled) return null;
+            if (!slot.slotData) return null;
             
             const midAngle = (slot.startAngle + slot.endAngle) / 2;
             const midAngleRad = (midAngle * Math.PI) / 180;
             const sparkleX = 50 + 35 * Math.cos(midAngleRad);
-            const sparkleY = 50 + 35 * Math.sin(midAngleRad);
-            
-            return (
-              <g key={`sparkle-${slot.index}`}>
-                <circle
-                  cx={sparkleX}
-                  cy={sparkleY}
-                  r="1.5"
-                  fill="#fbbf24"
-                  className="animate-pulse"
-                />
-                <circle
-                  cx={sparkleX}
-                  cy={sparkleY}
                   r="0.8"
                   fill="#fef3c7"
                   className="animate-pulse"
@@ -147,35 +141,12 @@ export default function RingVisual({ ringStorage, className }: RingVisualProps) 
               </g>
             );
           })}
-          
-          {/* Center gem */}
-          <circle
-            cx="50"
-            cy="50"
-            r="8"
-            fill="#7c3aed"
-            className="drop-shadow-sm"
-          />
-          <circle
-            cx="50"
-            cy="50"
-            r="5"
-            fill="#a855f7"
-            className="animate-pulse"
-          />
-          <circle
-            cx="48"
-            cy="48"
-            r="2"
-            fill="#e0e7ff"
-            className="opacity-80"
-          />
         </svg>
         
         {/* Capacity text overlay */}
         <div className="absolute inset-0 flex items-center justify-center">
-          <div className="text-center transform rotate-90">
-            <div className="text-xs font-bold text-purple-700">
+          <div className="text-center">
+            <div className="text-xs font-bold text-gray-700">
               {filledSlots.length}/5
             </div>
           </div>

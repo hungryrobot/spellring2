@@ -5,6 +5,7 @@ import { Zap, Plus, Eye, ChevronDown, ChevronUp, TrendingUp, Star } from "lucide
 import { type Spell } from "../../../shared/schema";
 import { cn } from "@/lib/utils";
 import { useState, useRef } from "react";
+import { getSpellColor } from "@/lib/spell-colors";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -42,6 +43,8 @@ export default function SpellCard({
   const audioRef = useRef<HTMLAudioElement | null>(null);
   
   // Check if spell can be upcast - look for multiple indicators
+  const spellColor = getSpellColor(spell.id, spell.name);
+  
   const canUpcast = (
     (spell.upcast && spell.upcast.toLowerCase() !== 'no' && spell.upcast.trim() !== '') ||
     (spell.description && spell.description.toLowerCase().includes('at higher levels')) ||
@@ -136,19 +139,28 @@ export default function SpellCard({
       className={cn(
         "p-4 transition-all duration-200",
         isRingCard 
-          ? "bg-white border-gray-300 border-2" 
+          ? `bg-white border-2` 
           : disabled 
             ? "bg-gray-100 border-gray-300 border-2 opacity-30 cursor-not-allowed"
             : spell.isFavorite
               ? "bg-blue-50 border-blue-300 border-[3px] hover:shadow-md cursor-pointer"
-              : "bg-white border-gray-300 border-[3px] hover:shadow-md cursor-pointer"
+              : "bg-white border-[3px] hover:shadow-md cursor-pointer"
       )}
+      style={isRingCard ? { borderColor: spellColor.fill } : {}}
     >
       <div className="space-y-3">
         {/* Mobile-optimized layout */}
         <div className="space-y-2">
           {/* Spell title - always first for clarity */}
           <div className="flex items-center gap-2">
+            {/* Color indicator dot for ring cards */}
+            {isRingCard && (
+              <div 
+                className="w-3 h-3 rounded-full flex-shrink-0"
+                style={{ backgroundColor: spellColor.fill }}
+              />
+            )}
+            
             {/* Favorite star button for library cards */}
             {!isRingCard && onToggleFavorite && (
               <Button
