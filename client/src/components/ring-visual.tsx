@@ -133,6 +133,13 @@ export default function RingVisual({ ringStorage, className }: RingVisualProps) 
             const midAngle = (slot.startAngle + slot.endAngle) / 2;
             const midAngleRad = (midAngle * Math.PI) / 180;
             const sparkleX = 50 + 35 * Math.cos(midAngleRad);
+            const sparkleY = 50 + 35 * Math.sin(midAngleRad);
+            
+            return (
+              <g key={`sparkle-${slot.index}`}>
+                <circle
+                  cx={sparkleX}
+                  cy={sparkleY}
                   r="0.8"
                   fill="#fef3c7"
                   className="animate-pulse"
