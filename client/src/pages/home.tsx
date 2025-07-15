@@ -12,6 +12,7 @@ import { useLocation } from "wouter";
 import { type Spell } from "../../../shared/schema";
 import SpellCard from "@/components/spell-card";
 import CapacityIndicator from "@/components/capacity-indicator";
+import RingVisual from "@/components/ring-visual";
 // Storage indicator removed
 
 export default function Home() {
@@ -210,6 +211,11 @@ export default function Home() {
             </CardHeader>
             
             <CardContent className="p-4 sm:p-6">
+              {/* Ring Visual */}
+              <div className="flex justify-center mb-6">
+                <RingVisual ringStorage={ringStorage} />
+              </div>
+              
               {!Array.isArray(ringStorage) || ringStorage.length === 0 ? (
                 <div className="text-center py-8">
                   <BookOpen className="h-12 w-12 text-gray-400 mx-auto mb-4" />
